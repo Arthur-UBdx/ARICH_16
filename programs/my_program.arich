@@ -1,0 +1,38 @@
+// my_program.arich
+// Date: 1/01/1970
+// Author: RICHELET Arthur
+// Description: This is a program for the ARICH-16 processor 
+
+// ------------------------------
+// This is an example file for ARICH-16 assembly language
+// Values can be written in hexadecimal or binary using the prefixes 0x or 0b, or in decimal without any prefix
+
+// Special characters:
+//  '%': Register reference
+//  '&': Variable reference
+//  '*': Variable address (as immediate value)
+//  '$': Immediate value
+//  ':': Label reference and definition if at the beginning of a line
+//  '#': Macro definition  
+//  '//': Comment
+// ------------------------------
+
+
+#stack 0x0F // gives 16 addresses for the stack
+// this should be done before any variable definition that doesn't specify any address to avoid
+// having variable addresses set by the compiler where the stack should be
+#let my_var
+#letreg afficheur 0xf0
+
+
+//Main program
+
+MOV $0x10 %R0
+INC %R0
+MOV $0x12 %R1
+STR &my_var $0b110
+:loop
+INC %R0
+IFLE %R0 $40 :loop
+MOV %R0 %afficheur
+HALT

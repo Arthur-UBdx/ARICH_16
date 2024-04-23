@@ -1,0 +1,6 @@
+//KEYWORD,OPERANDS,OPTIONAL_OPERANDS;
+define,2,0;
+let,2,2;
+deref,1,0;
+stack,1,0;
+letreg,2,0;

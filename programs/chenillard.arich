@@ -1,0 +1,48 @@
+// chenillard.arich
+// Date: 1/01/1970
+// Author: RICHELET Arthur
+// Description: This is a program for the ARICH-16 processor 
+
+// ------------------------------
+// This is an example file for ARICH-16 assembly language
+// Values can be written in hexadecimal or binary using the prefixes 0x or 0b, or in decimal without any prefix
+
+#define wait_time $0x10
+
+#letreg DDRB 0x00f3
+#letreg PORTB 0x00f2
+
+MOV $0b00111100 %DDRB
+MOV $0b100 %R0
+MOV %R0 %PORTB
+
+:loop
+SHL %R0 $1 //on << R0 de 1
+MOV %R0 %PORTB
+// on attend
+JMP :wait 
+:end_wait
+//
+IFGE %R0 $0x20 :fin_chenillard // si on arrive a la fin du chenillard
+JMP :bouton //loop
+
+:fin_chenillard
+MOV $0x2 %R0
+JMP :loop
+
+:wait
+MOV $0 %R7
+:wait_loop
+INC %R7
+IFLT %R7 wait_time :wait_loop
+JMP :end_wait
+
+:bouton
+AND %PORTB $0x2 %R1
+IFNZ %R1 :loop
+MOV $0 %PORTB
+JMP :bouton
+
+
+
+

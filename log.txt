@@ -1,0 +1,71 @@
+Label :loop defined at 0x009
+Label :fin_chenillard defined at 0x015
+Label :bouton defined at 0x01A
+//
+000:	MOV $0b00111100 %DDRB                    -> 0101 003C 00F3
+003:	MOV $0b100 %R0                           -> 0101 0004 0000
+006:	MOV %R0 %PORTB                           -> 0001 0000 00F2
+009:	SHL %R0 $1                               -> 0219 0000 0001
+00C:	MOV %R0 %PORTB                           -> 0001 0000 00F2
+00F:	IFGE %R0 $0x20 :fin_chenillard           -> 0224 0000 0020 0015
+013:	JMP :bouton                              -> 0020 001A
+015:	MOV $0x2 %R0                             -> 0101 0002 0000
+018:	JMP :loop                                -> 0020 0009
+01A:	AND %PORTB $0x2 %R1                      -> 0215 00F2 0002 0001
+01E:	IFNZ %R1 :loop                           -> 0027 0001 0009
+021:	MOV $0 %PORTB                            -> 0101 0000 00F2
+024:	JMP :bouton                              -> 0020 001A
+//
+FINAL BINARY CODE: 0101 003C 00F3 0101 0004 0000 0001 0000 00F2 0219 0000 0001 0001 0000 00F2 0224 0000 0020 0015 0020 001A 0101 0002 0000 0020 0009 0215 00F2 0002 0001 0027 0001 0009 0101 0000 00F2 0020 001A
+//------------------------------End of log file------------------------------
+
+Label :loop defined at 0x009
+Label :fin_chenillard defined at 0x015
+Label :bouton defined at 0x01A
+//
+000:	MOV $0b00111100 %DDRB                    -> 0101 003C 00F3
+003:	MOV $0b100 %R0                           -> 0101 0004 0000
+006:	MOV %R0 %PORTB                           -> 0001 0000 00F2
+009:	SHL %R0 $1                               -> 0219 0000 0001
+00C:	MOV %R0 %PORTB                           -> 0001 0000 00F2
+00F:	IFGE %R0 $0x20 :fin_chenillard           -> 0224 0000 0020 0015
+013:	JMP :bouton                              -> 0020 001A
+015:	MOV $0x2 %R0                             -> 0101 0002 0000
+018:	JMP :loop                                -> 0020 0009
+01A:	AND %PORTB $0x2 %R1                      -> 0215 00F2 0002 0001
+01E:	IFNZ %R1 :loop                           -> 0027 0001 0009
+021:	MOV $0 %PORTB                            -> 0101 0000 00F2
+024:	JMP :bouton                              -> 0020 001A
+//
+FINAL BINARY CODE: 0101 003C 00F3 0101 0004 0000 0001 0000 00F2 0219 0000 0001 0001 0000 00F2 0224 0000 0020 0015 0020 001A 0101 0002 0000 0020 0009 0215 00F2 0002 0001 0027 0001 0009 0101 0000 00F2 0020 001A
+//------------------------------End of log file------------------------------
+
+Label :loop defined at 0x009
+Label :end_wait defined at 0x011
+Label :fin_chenillard defined at 0x017
+Label :wait defined at 0x01C
+Label :wait_loop defined at 0x01F
+Label :bouton defined at 0x027
+//
+000:	MOV $0b00111100 %DDRB                    -> 0101 003C 00F3
+003:	MOV $0b100 %R0                           -> 0101 0004 0000
+006:	MOV %R0 %PORTB                           -> 0001 0000 00F2
+009:	SHL %R0 $1                               -> 0219 0000 0001
+00C:	MOV %R0 %PORTB                           -> 0001 0000 00F2
+00F:	JMP :wait                                -> 0020 001C
+011:	IFGE %R0 $0x20 :fin_chenillard           -> 0224 0000 0020 0017
+015:	JMP :bouton                              -> 0020 0027
+017:	MOV $0x2 %R0                             -> 0101 0002 0000
+01A:	JMP :loop                                -> 0020 0009
+01C:	MOV $0 %R7                               -> 0101 0000 0007
+01F:	INC %R7                                  -> 0013 0007
+021:	IFLT %R7 wait_time :wait_loop            -> 0222 0007 0010 001F
+025:	JMP :end_wait                            -> 0020 0011
+027:	AND %PORTB $0x2 %R1                      -> 0215 00F2 0002 0001
+02B:	IFNZ %R1 :loop                           -> 0027 0001 0009
+02E:	MOV $0 %PORTB                            -> 0101 0000 00F2
+031:	JMP :bouton                              -> 0020 0027
+//
+FINAL BINARY CODE: 0101 003C 00F3 0101 0004 0000 0001 0000 00F2 0219 0000 0001 0001 0000 00F2 0020 001C 0224 0000 0020 0017 0020 0027 0101 0002 0000 0020 0009 0101 0000 0007 0013 0007 0222 0007 0010 001F 0020 0011 0215 00F2 0002 0001 0027 0001 0009 0101 0000 00F2 0020 0027
+//------------------------------End of log file------------------------------
+

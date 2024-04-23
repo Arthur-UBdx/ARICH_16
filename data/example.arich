@@ -1,0 +1,36 @@
+// Date: 1/01/1970
+// Author: RICHELET Arthur
+// Description: This is a program for the ARICH-16 processor 
+
+// ------------------------------
+// This is an example file for ARICH-16 assembly language
+// Values can be written in hexadecimal or binary using the prefixes 0x or 0b, or in decimal without any prefix
+
+// Special characters:
+//  '%': Register reference
+//  '&': Variable reference
+//  '$': Immediate value
+//  ':': Label reference and definition if at the beginning of a line
+//  '#': Macro definition  
+//  '//': Comment
+//
+// Macros:
+// #define <name> <value>: creates a replacement macro, any time <name> will be found in the file it will be replaced by <value>
+//
+// #let <my_var> [address]: creates a variable stored in memory at [address], [address] is optional 
+//      and if not specified, the assembler will try to find a space for it on the heap
+// 
+// #let <my_table>[n] [start_address]: creates an array of size n stored in memory starting at [start_address], 
+//      if [start_address] is not specified, the assembler will try to find a space for it on the heap;
+//
+// #deref <variable>: dereferences a variable, the assembler will not be able to identify the variable past this point
+//
+// #letreg <name> <value>: defines a register/peripheral to be accessed at the given addressss
+//
+// #stack <value>: initializes the stack at a given value
+// ------------------------------
+
+
+#stack 0xFF // gives 255 addresses for the stack
+// this should be done before any variable definition that doesn't specify any address to avoid
+// having variable addresses set by the compiler where the stack should be
