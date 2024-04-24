@@ -13,23 +13,29 @@ class Memory:
     def assign_address(self, address=None) -> int:
         if address is None:
             address = self.stack_base_address+1
-            while address in self.used_addresses: address += 1
+            while address in self.used_addresses:
+                address += 1
             self.used_addresses.add(address)
             return address
         else:
-            if address in self.used_addresses: raise ValueError(f"Address {address} already used, use #deref to free it")
+            if address in self.used_addresses:
+                raise ValueError(f"Address {address} already used, use #deref to free it")
             self.used_addresses.add(address)
             return address
         
     def _is_enough_space(self, side:int, start_address:int):
             for addr in range(start_address, start_address+side):
-                if addr in self.used_addresses: return False
+                if addr in self.used_addresses:
+                    return False
             return True
         
     def assign_addresses_table(self, size:int, start_address:int=None) -> list:
-        if start_address is None: start_address = self.stack_base_address+1
-        while self._is_enough_space(size, start_address): start_address += 1
-        for i in range(size): self.used_addresses.add(start_address+i)
+        if start_address is None:
+            start_address = self.stack_base_address+1
+        while self._is_enough_space(size, start_address):
+            start_address += 1
+        for i in range(size):
+            self.used_addresses.add(start_address+i)
         return [start_address+i for i in range(size)]
 
 class Macro:
@@ -45,7 +51,8 @@ class Macro:
         return f"Macro({self.__str__()})"
     
     def from_string(string:str, debug=False) -> 'Macro':
-        if debug: print(f"s: {string}")
+        if debug:
+            print(f"s: {string}")
         return Macro(*re.search(REGEX_MACRO_LIST, string).groups())
     
     def from_file(filename:str='data/macros.txt') -> list:
@@ -73,7 +80,8 @@ class Instruction:
         return f"Instruction({self.__str__()})"
     
     def from_string(string:str, debug=False) -> 'Instruction':
-        if debug: print(f"s: {string}")
+        if debug:
+            print(f"s: {string}")
         #use REGEX_INSTRUCTIONS with the capture groups to get the values
         return Instruction(*re.search(REGEX_INSTRUCTIONS_LIST, string).groups())
     
@@ -101,5 +109,6 @@ class Registers:
         
 
 if __name__ == '__main__':
-    import sys, os
+    import sys
+    import os
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # add the path to the pythonlib folder

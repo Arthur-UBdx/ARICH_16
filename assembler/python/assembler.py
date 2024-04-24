@@ -9,7 +9,8 @@
 #   Write the binary code to a file using LogisimMemoryFile
 
 # add the path to the pythonlib folder
-import sys, os
+import sys
+import os
 import argparse
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))) # add the path to the pythonlib folder
@@ -67,7 +68,8 @@ class Assembler:
         self.macro_dict = Macro.into_dict(Macro.from_file(MACROS_FILE))
         self.registers = Registers().registers
         
-        with open(input_filename, 'r') as f: self.input_file = f.readlines()
+        with open(input_filename, 'r') as f:
+            self.input_file = f.readlines()
         self.output_file = LogisimMemoryFile(10, 16)
         self.output_filename = output_filename
         
@@ -80,22 +82,29 @@ class Assembler:
         self.binary_code = []
         
     def debug_log(self, message:str) -> None:
-        with open('log.txt', 'a') as f: f.write(message + '\n')
+        with open('log.txt', 'a') as f:
+            f.write(message + '\n')
                 
     def into_number(self,string:str) -> int:
-        if type(string) == int: return string
-        elif type(string) != str: raise SyntaxError(f"Invalid number {string}")
+        if isinstance(string, int):
+            return string
+        elif not isinstance(string, str):
+            raise SyntaxError(f"Invalid number {string}")
         try:
-            if string.startswith('0x'): return int(string, 16)
-            elif string.startswith('0b'): return int(string, 2)
+            if string.startswith('0x'):
+                return int(string, 16)
+            elif string.startswith('0b'):
+                return int(string, 2)
             return int(string)
-        except ValueError as e: raise SyntaxError(f"Invalid number {string}")
+        except ValueError as e:
+            raise SyntaxError(f"Invalid number {string}") from e
         
     def remove_comments(self, line:str) -> str:
         return re.sub(REGEX_COMM, "", line)
         
     def new_file(filename:str, force=False) -> None:
-        if not force and os.path.exists(filename): raise FileExistsError(f"File {filename} already exists, use '-f' to overwrite it")
+        if not force and os.path.exists(filename):
+            raise FileExistsError(f"File {filename} already exists, use '-f' to overwrite it")
         
         with open('data/example.arich') as f:
             content = f.read()
@@ -108,9 +117,12 @@ class Assembler:
         tokens[0] = tokens[0][1:]
         if tokens[0] in self.macro_dict:
             macro = self.macro_dict[tokens[0]]
-            if len(tokens)-1 < macro.nb_operands - macro.optional_operands: raise MacroError(f"Too few operands for macro {macro.keyword}")
-            if len(tokens)-1 > macro.nb_operands: raise MacroError(f"Too many operands for macro {macro.keyword}")
-        else: raise MacroError(f"Invalid macro {tokens[0]}")
+            if len(tokens)-1 < macro.nb_operands - macro.optional_operands:
+                raise MacroError(f"Too few operands for macro {macro.keyword}")
+            if len(tokens)-1 > macro.nb_operands:
+                raise MacroError(f"Too many operands for macro {macro.keyword}")
+        else:
+            raise MacroError(f"Invalid macro {tokens[0]}")
         
         match macro.keyword:
             case "stack":
@@ -118,20 +130,26 @@ class Assembler:
                 self.memory.stack_base_address = self.into_number(tokens[1])
                 
             case "define":
-                if tokens[1][0].isdigit(): raise MacroError(f"Variable/replacement name {tokens[1]} cannot start with a digit")
+                if tokens[1][0].isdigit():
+                    raise MacroError(f"Variable/replacement name {tokens[1]} cannot start with a digit")
                 if tokens[1] in self.replacements:
                     raise MacroError(f"Replacement macro {tokens[1]} already defined")
-                else: self.replacements[tokens[1]] = tokens[2]
+                else:
+                    self.replacements[tokens[1]] = tokens[2]
                 
             case "let":
-                if tokens[1][0].isdigit(): raise MacroError(f"Variable/replacement name {tokens[1]} cannot start with a digit")
-                if tokens[1] in self.variables: raise MacroError(f"Variable {tokens[1]} already defined")
+                if tokens[1][0].isdigit():
+                    raise MacroError(f"Variable/replacement name {tokens[1]} cannot start with a digit")
+                if tokens[1] in self.variables:
+                    raise MacroError(f"Variable {tokens[1]} already defined")
                 address = tokens[2] if tokens.__len__() == 3 else None
                 
                 if re.match(r'\[[0-9]+\]', tokens[1][-3:]): # if trying to define an array
-                    if not tokens[1][-2].isdigit(): raise MacroError(f"Invalid array size {tokens[1][-2]}")
+                    if not tokens[1][-2].isdigit():
+                        raise MacroError(f"Invalid array size {tokens[1][-2]}")
                     size = int(tokens[1][-2])
-                    if size == 0: raise MacroError(f"Array size cannot be 0")
+                    if size == 0:
+                        raise MacroError("Array size cannot be 0")
                     start_address = self.memory.assign_address()
                     addresses = self.memory.assign_addresses_table(size, start_address)
                     for index, address in enumerate(addresses):
@@ -140,7 +158,8 @@ class Assembler:
                     self.variables[tokens[1]] = self.memory.assign_address(self.into_number(address) if address is not None else None)
                 
             case "deref":
-                if tokens[1][0].isdigit(): raise MacroError(f"Variable/replacement name {tokens[1]} cannot start with a digit")
+                if tokens[1][0].isdigit():
+                    raise MacroError(f"Variable/replacement name {tokens[1]} cannot start with a digit")
                 if tokens[1][-2:] == '[]':
                     if f"{tokens[1][:-2]}[0]" not in self.variables:
                         raise VariableError(f"Variable {tokens[1]} is not defined")
@@ -156,23 +175,31 @@ class Assembler:
                     self.memory.used_addresses.remove(self.variables[tokens[1]])
                     
             case "letreg":
-                if tokens[1][0].isdigit(): raise MacroError(f"Register name {tokens[1]} cannot start with a digit")
-                if tokens[1] in self.registers: raise MacroError(f"Register {tokens[1]} already defined")
+                if tokens[1][0].isdigit():
+                    raise MacroError(f"Register name {tokens[1]} cannot start with a digit")
+                if tokens[1] in self.registers:
+                    raise MacroError(f"Register {tokens[1]} already defined")
                 self.registers[tokens[1]] = self.into_number(tokens[2])
                 
                 
     def parse_label(self, line:str, debug=False) -> None:
-        if line.split().__len__() != 1: raise LabelError(f"Invalid label {line} (label don't contain spaces)")
-        if line in self.labels: raise LabelError(f"Label {line} already defined")
+        if line.split().__len__() != 1:
+            raise LabelError(f"Invalid label {line} (label don't contain spaces)")
+        if line in self.labels:
+            raise LabelError(f"Label {line} already defined")
         self.labels[line[1:]] = self.binary_code_size
-        if VERBOSE: print(f"Label {line} defined at 0x{self.binary_code_size:03X}")
-        if debug: self.debug_log(f"Label {line} defined at 0x{self.binary_code_size:03X}")
+        if VERBOSE:
+            print(f"Label {line} defined at 0x{self.binary_code_size:03X}")
+        if debug:
+            self.debug_log(f"Label {line} defined at 0x{self.binary_code_size:03X}")
         
     def pre_process_length(self,debug=False) -> None:
         for line in self.input_file:
             line = self.remove_comments(line).strip()
-            if line.isspace() or line == '': continue
-            if line.startswith('#'): continue
+            if line.isspace() or line == '':
+                continue
+            if line.startswith('#'):
+                continue
             if line.startswith(':'): 
                 self.parse_label(line, debug)
                 continue
@@ -181,22 +208,29 @@ class Assembler:
         
     def parse_line(self, line:str, debug=False) -> None:
         line = self.remove_comments(line).strip()
-        if line.isspace() or line == '': return
-        if line.startswith('#'): return self.parse_macro(line)
-        if line.startswith(':'): return
+        if line.isspace() or line == '':
+            return
+        if line.startswith('#'):
+            return self.parse_macro(line)
+        if line.startswith(':'):
+            return
         
         tokens = line.split()
-        if tokens[0] not in self.instructions_dict: raise SyntaxError(f"Invalid instruction {tokens[0]}")
+        if tokens[0] not in self.instructions_dict:
+            raise SyntaxError(f"Invalid instruction {tokens[0]}")
         instruction = self.instructions_dict[tokens[0]]
-        if len(tokens)-1 < instruction.nb_operands: raise SyntaxError(f"Too few operands for instruction {instruction.mnemonic}")
-        if len(tokens)-1 > instruction.nb_operands: raise SyntaxError(f"Too many operands for instruction {instruction.mnemonic}")
+        if len(tokens)-1 < instruction.nb_operands:
+            raise SyntaxError(f"Too few operands for instruction {instruction.mnemonic}")
+        if len(tokens)-1 > instruction.nb_operands:
+            raise SyntaxError(f"Too many operands for instruction {instruction.mnemonic}")
         
         opcode = instruction.opcode
         operands = []
         
         for key,value in self.replacements.items(): # 'define' macro replacements
             for index, operand in enumerate(tokens[1:]):
-                if operand == key: tokens[index+1] = value
+                if operand == key:
+                    tokens[index+1] = value
         
         for index, operand in enumerate(tokens[1:]): # replace registers, variables and labels
             match operand[0]:
@@ -207,7 +241,7 @@ class Assembler:
  
                 case '&':
                     if index+1 == instruction.output_operand: #output_operand = 0 -> no output operand, 1 -> first operand etc...
-                        raise SyntaxError(f"The output operand cannot be passed as immediate value")
+                        raise SyntaxError("The output operand cannot be passed as immediate value")
                     if operand[1:] not in self.variables:
                         raise VariableError(f"Variable {operand[1:]} is not (yet) defined")
                     operand = self.variables[operand[1:]]
@@ -215,7 +249,7 @@ class Assembler:
                     
                 case '$':
                     if index+1 == instruction.output_operand:
-                        raise SyntaxError(f"The output operand cannot be passed as immediate value")
+                        raise SyntaxError("The output operand cannot be passed as immediate value")
                     operand = self.into_number(operand[1:])
                     opcode = opcode | 1 << (8+index) # set the immediate bit (8th for the first operand, 9th for the second)
                     
@@ -227,28 +261,32 @@ class Assembler:
                     operand = self.into_number(operand)
             operands.append(operand)
             
-        if VERBOSE: print(f"{f'{self.binary_code.__len__():03X}'}:\t{line} {(40-line.__len__())*' '}-> {f'{opcode:04X}' + ' ' + ' '.join([f'{o:04X}' for o in operands])}")
-        if debug: self.debug_log(f"{f'{self.binary_code.__len__():03X}'}:\t{line} {(40-line.__len__())*' '}-> {f'{opcode:04X}' + ' ' + ' '.join([f'{o:04X}' for o in operands])}")
+        if VERBOSE:
+            print(f"{f'{self.binary_code.__len__():03X}'}:\t{line} {(40-line.__len__())*' '}-> {f'{opcode:04X}' + ' ' + ' '.join([f'{o:04X}' for o in operands])}")
+        if debug:
+            self.debug_log(f"{f'{self.binary_code.__len__():03X}'}:\t{line} {(40-line.__len__())*' '}-> {f'{opcode:04X}' + ' ' + ' '.join([f'{o:04X}' for o in operands])}")
         self.binary_code += [opcode, *operands]
         
     def assemble(self, debug=False) -> None:
         self.pre_process_length(debug)
-        if debug: self.debug_log(f"//")
+        if debug:
+            self.debug_log("//")
         
-        for index,line in enumerate(self.input_file):
-            LINE_NUMBER = index
-            LINE_TEXT = line
+        for line in self.input_file:
             self.parse_line(line, debug)
     
-        if VERBOSE : print('\nFINAL BINARY CODE: '+' '.join([f'{code:04X}' for code in self.binary_code]))
-        if debug: self.debug_log('//\nFINAL BINARY CODE: '+' '.join([f'{code:04X}' for code in self.binary_code])+'\n//'+'-'*30+'End of log file'+'-'*30+'\n')
+        if VERBOSE:
+            print('\nFINAL BINARY CODE: '+' '.join([f'{code:04X}' for code in self.binary_code]))
+        if debug:
+            self.debug_log('//\nFINAL BINARY CODE: '+' '.join([f'{code:04X}' for code in self.binary_code])+'\n//'+'-'*30+'End of log file'+'-'*30+'\n')
         
         self.output_file.insert_list(self.binary_code).to_file(self.output_filename, force=FORCE)
         
                 
         
 if __name__ == '__main__':
-    class Args: pass
+    class Args:
+        pass
     parser = argparse.ArgumentParser(description='Assembler for the ARICH-16 processor')
     parser.add_argument('filename', type=str, help='Input file for the assembler')
     parser.add_argument('-o', '--output', type=str, help='Output file for the assembler', default='output.lgsm')

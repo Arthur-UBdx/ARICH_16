@@ -7,8 +7,10 @@ class LogisimMemoryFile:
         self.content = [0] * 2**adress_size
         
     def insert(self, adress:int, data:int) -> 'LogisimMemoryFile':
-        if data > 2**self.data_size: raise ValueError("Data is too big for the memory")
-        if adress > 2**self.adress_size: raise ValueError("Adress is too big for the memory")
+        if data > 2**self.data_size:
+            raise ValueError("Data is too big for the memory")
+        if adress > 2**self.adress_size:
+            raise ValueError("Adress is too big for the memory")
         self.content[adress] = data
         return self
         
@@ -36,7 +38,8 @@ class LogisimMemoryFile:
             file_str += line_adress + " ".join(line_data) + "\n"
             adress += 16
             
-        with open(filename, 'w') as f: f.write(file_str)
+        with open(filename, 'w') as f:
+            f.write(file_str)
             
 if __name__ == '__main__':
     pass
