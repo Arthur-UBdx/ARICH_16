@@ -37,7 +37,7 @@ Here are all the arguments you can use with the assembler:
 
 | Mnemonic | Description                                    | Opcode | Operands | Usage      |
 |----------|-------------                                   |--------|----------| -------      |
-| NOOP     | No operation                                   | 0x--00   |          | NOP          |
+| NOOP     | No operation                                   | 0x--00   |          | NOOP          |
 | MOV      | Move from operand A to C                       | 0x--01   | 2        | MOV \<A> \<C>|
 | PUSH     | Push A onto the stack                          | 0x--02   | 1        | PUSH \<A>     |
 | POP      | Pop from the stack to C                        | 0x--03   | 1        | POP \<C>    |
