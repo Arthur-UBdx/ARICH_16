@@ -1,8 +1,39 @@
-# Instructions ARICH-16
+# ARICH-16
 
-## Instructions
+ARICH-16 is a 16-bit processor architecture, based on the RISC architecture,
+designed on Logisim-Evolution by Arthur RICHELET, the assembler is designed in Python a Rust version is WIP.
 
-### General Purpose Instructions
+## Assembly
+
+To create a `.arich` file, you can use the assembler `assembler.py` with the following command:
+
+```bash
+python assembler.py <filename> -n/-new
+```
+
+To assemble a `.arich` file into a file loadable by Logisim-Evolution, you can use the following command:
+
+```bash
+python assembler.py <filename> -o <outputfile>
+```
+
+You can then use the `Load Image` in logisim to load the file into the memory.
+
+Here are all the arguments you can use with the assembler:
+
+```plaintext
+-h/--help: Display the help message
+-n/--new: Create a new file
+-o/--output: Specify the output file (default: output.bin)
+-v/--verbose: Verbose mode, will print all the instructions and their corresponding opcodes, as well as macros, variables and labels
+-d/--debug: Debug mode, will save into a file called <log.txt> the content of the verbose mode
+```
+
+## Instructions ARICH-16
+
+### Instructions
+
+#### General Purpose Instructions
 
 | Mnemonic | Description                                    | Opcode | Operands | Usage      |
 |----------|-------------                                   |--------|----------| -------      |
@@ -14,7 +45,7 @@
 | LDR      | Load from memory at address MemAddr into C     | 0x--05   | 2        | LDR \<MemAddr> \<C> |
 | ... | *Reserved* | 0x--06-0x--0F | | |
 
-### Arithmetic Instructions
+#### Arithmetic Instructions
 
 | Mnemonic | Description                             | Opcode | Operands | Usage      |
 |----------|-------------                            |--------|----------| -------      |
@@ -24,7 +55,7 @@
 | INC      | Increment A by 1 and stores it in C     | 0x--13   | 1        | INC \<A> |
 | DEC      | Decrement A by 1 and stores it in C     | 0x--14   | 1        | DEC \<A> |
 
-### Logical Instructions
+#### Logical Instructions
 
 | Mnemonic | Description                                            | Opcode   | Operands | Usage                 |
 |----------|-------------                                           |--------  |----------| -------               |
@@ -39,7 +70,7 @@
 | ROR      | Rotate A right by B bits                               | 0x--1D   | 2        | ROR \<A> \<B>         |
 | ... | *Reserved* | 0x--1E-0x--1F | | |
 
-### Comparison Instructions
+#### Comparison Instructions
 
 | Mnemonic | Description                             | Opcode | Operands | Usage|
 |----------|-------------                            |--------|----------| -------|
@@ -54,7 +85,7 @@
 | IFZ      | Jump to address if A == 0               | 0x--28   | 2        | IFZ \<A> \<PCAddr> |
 | ... | *Reserved* | 0x--38-0x--3F | | |
 
-### Control Instructions
+#### Control Instructions
 
 | Mnemonic | Description                             | Opcode | Operands | Usage        |
 |----------|-------------                            |--------|----------| -------      |
@@ -63,9 +94,9 @@
 | HALT     | Halt the program                        | 0x--32   | 0        | HALT         |
 | ... | *Reserved* | 0x--34-0x--3F | | |
 
-## Registers and Flags
+### Registers and Flags
 
-### Registers
+#### Registers
 
 | Name      | Adress    | Description |
 |------     |-------    |-------------|
@@ -79,7 +110,7 @@
 | ...       | 0x0019-0x001F | *Reserved* |
 | ...       | 0x0020-0xFFFF | Other peripherals |
 
-### Flags
+#### Flags
 
 | Name | Bit | Description |
 |------|-----|-------------|
@@ -88,7 +119,7 @@
 | SUDF | 2   | Stack Underflow Flag |
 | ...  | 3-16 | *Reserved* |
 
-## OPCODES decoding
+### OPCODES decoding
 
 | Bit(s) | Use |
 |--------|-----|
@@ -97,7 +128,7 @@
 | 9      | Use second operand value as an Immediate Value |
 | 10-15  | *Reserved* |
 
-## Special Characters
+### Special Characters
 
 | Character | Description | Example |
 |-----------|-------------|---------|
@@ -105,10 +136,10 @@
 | &  | Refers to a variable (address in memory) | `LDR &my_var %R0` moves the contents of `my_var` in the register `R0` |
 | $  | Use the given value as an immediate value instead of an adress | `MOV $0x10 %R0` moves the value `0x10` in the register `R0` |
 | :  | Refers as a label for a jump instruction | `JMP :my_label` jumps to the label `my_label`, which is set by writing `:label` where the label is to be put |
-| #  | Is used for macros | `#define my_var 0x10` tells the assembler that the variable `my_var` is at the adress `0x10`|
+| ##  | Is used for macros | `#define my_var 0x10` tells the assembler that the variable `my_var` is at the adress `0x10`|
 | // | Is used for comments | `// This is a comment` This is a comment and will be ignored by the assembler |
 
-## Macros
+### Macros
 
 | Keyword | Description | Example | Notes |
 |---------|-------------|---------|-------|

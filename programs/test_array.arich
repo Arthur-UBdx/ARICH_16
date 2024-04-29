@@ -1,0 +1,22 @@
+// test_array
+// Date: 1/01/1970
+// Author: RICHELET Arthur
+// Description: This is a program for the ARICH-16 processor 
+
+// ------------------------------
+// This is an example file for ARICH-16 assembly language
+// Values can be written in hexadecimal or binary using the prefixes 0x or 0b, or in decimal without any prefix
+
+#define array_size 10
+#let array[array_size]
+
+STR &array[0] $1
+LDR &array[0] %R0
+MOV &array[0] %R1
+:loop
+SHL %R0 1
+INC %R0
+INC %R1
+STR %R1 %R0
+IFLT %R1 $array_size :loop
+HALT
