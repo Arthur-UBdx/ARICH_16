@@ -148,3 +148,5 @@ Here are all the arguments you can use with the assembler:
 | #let | Defines a variable or a table | `#let my_var 0x10` tells the assembler that the variable `my_var` is at the adress `0x10`| Use `#let my_var[n] 0x10` for defining an array of size `n` starting at `0x10`. If no address are provided, the assembler will try to find an address for the variable/array|
 | #deref  | Dereferences a variable or a table | `#deref my_var` tells the assembler that the variable `my_var` is no longer defined | Use `#deref my_var[]` to deref an array|
 | #letreg | Defines a register at the given address | `#letreg PORTC 0xf0` tells the assembler that the register `PORTC` is located at address 0xf0 ||
+
+![ARICH-16](cpu.png)
